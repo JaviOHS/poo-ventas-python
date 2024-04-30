@@ -23,23 +23,13 @@ class CrudClients(ICrud):
       gotoxy(30,3);print(red_color + '​​🔴​​ AGREGAR CLIENTE 🔴​​​')
       json_file = JsonFile(path+'/archivos/clients.json')
       clients_data = json_file.read()
-      while True: 
-        dni = validar.cedula(f"{cyan_color}- Ingrese DNI del cliente: {yellow_color}", 10,5)
-        client = json_file.find("dni",dni)
-        if client:
-          gotoxy(10,5);print(f"{red_color}El DNI ya existe en el sistema. 😡    ​");time.sleep(2)
-          gotoxy(10,5);print(' '*120)
-          continue
-        break
-      new_client_data['dni'] = dni
-      gotoxy(10,6);new_client_data['nombre'] = input(f"{cyan_color}- Ingrese nombre del cliente: {yellow_color}").strip()
-      gotoxy(10,7);new_client_data['apellido'] = input(f"{cyan_color}- Ingrese el apellido del cliente: {yellow_color}")
+      new_client_data['dni'] =  validar.validar_dni_sistema(f"{cyan_color}- Ingrese DNI del cliente: {yellow_color}", 10,5)
+      new_client_data['nombre'] = validar.solo_letras(f"{cyan_color}- Ingrese nombre del cliente: {yellow_color}",f"{red_color}- ¿Su nombre lleva números? ¡Intentelo de nuevo! 😡", 10, 6)
+      new_client_data['apellido'] = validar.solo_letras(f"{cyan_color}- Ingrese el apellido del cliente: {yellow_color}",f"{red_color}- ¿Su apellido lleva números? ¡Intentelo de nuevo! 😡",10,7)
       new_client_data['valor'] = validar.solo_decimales(f"{cyan_color}- Ingrese el valor del cliente: {yellow_color}", f"{red_color}- ¡El valor debe ser uno o varios números! ​😹​🖐️​ {reset_color}", 10,8)
-      if new_client_data['valor'] > 5000:
-        new_client_data['tipo'] = 'VIP'
-      else:
-        new_client_data['tipo'] = 'Regular'
-      gotoxy(10,10);option = input(f'{stick}Desea guardar cambios? (s/n) {stick}Reingresar datos (z) {stick}')
+      new_client_data['tipo'] = 'VIP' if new_client_data['valor'] > 5000 else' Regular'
+      
+      gotoxy(10,10);option = input(f'{stick}¿Desea guardar cambios? (s/n) {stick}Reingresar datos (z) {stick}')
       gotoxy(10,10);print(' '*120)
       if option.lower() == 's':
         clients_data.append(new_client_data)
@@ -59,13 +49,14 @@ class CrudClients(ICrud):
         gotoxy(12,10);print(red_color + '🤡​ Ingrese opciones validas. 🤡​​');time.sleep(1)
   borrarPantalla()
 
-  def consult(self):
+  def update(self):
     stick = f'{red_color}| - {reset_color}'
     while True:
       print('\033c', end='')
-      gotoxy(2,1);print(purple_color + "●～●～●～●～●～●～●～●～"*4)
-      gotoxy(25,3);print(red_color + '🔴​​​ CONSULTAR INFO. DE CLIENTES 🔴​​​')
-      gotoxy(10,5);dni = input(f"{cyan_color}- Ingrese DNI del cliente: {yellow_color}")
+      gotoxy(2,1);print(purple_color + "︵ ‿ ︵ ‿ ︵＼ʕ •ᴥ•ʔ／︵ ‿ ︵ ‿ ︵"*3)
+      gotoxy(25,3);print(red_color + '🔴 ACTUALIZAR INFO. DE CLIENTE 🔴')
+      gotoxy(10,5);dni = input(f"{cyan_color}- Ingrese DNI del cliente:{yellow_color} ")
+      gotoxy(10,5);print(' '*120)
       json_file = JsonFile(path+'/archivos/clients.json')
       clients_data = json_file.read()
       found_client = None
@@ -74,22 +65,36 @@ class CrudClients(ICrud):
           found_client = client
           break
       if found_client:
-        gotoxy(10,7);print(f"{cyan_color}- Nombre:   {yellow_color}{found_client['nombre']}")
-        gotoxy(10,8);print(f"{cyan_color}- Apellido: {yellow_color}{found_client['apellido']}")
-        gotoxy(10,9);print(f"{cyan_color}- Valor:    {yellow_color}{found_client['valor']}")
-        gotoxy(10,10);print(f"{cyan_color}- Tipo:    {yellow_color}{found_client['tipo']}")
-        gotoxy(4,12);option=input(f"{stick}Ingrese '1' para volver a consultar {stick}Presione ENTER para salir {stick} ")
-        gotoxy(4,12);print(' '*300)
+        gotoxy(10,5);print(f"{purple_color}- INFORMACIÓN ACTUAL:")
+        gotoxy(10,7);print(f"{cyan_color}- DNI:      {yellow_color}{found_client['dni']}")
+        gotoxy(10,8);print(f"{cyan_color}- Nombre:   {yellow_color}{found_client['nombre']}")
+        gotoxy(10,9);print(f"{cyan_color}- Apellido: {yellow_color}{found_client['apellido']}")
+        gotoxy(10,10);print(f"{cyan_color}- Valor:    {yellow_color}{found_client['valor']}")
+        gotoxy(4,12);option=input(f"{stick}Ingrese '1' para actualizar datos {stick}Ingrese '2' para salir {stick} ")    
+        gotoxy(4,12);print(' '*200)
         if option == "1":
-          gotoxy(10, 12);print(red_color + "Volver a buscar cliente... ​😜​");time.sleep(2)
-          borrarPantalla()
-          continue
+          while True:
+            gotoxy(62,5);print(f"{purple_color}- ACTUALIZAR INFORMACIÓN:")
+            gotoxy(62,7);print(f"{cyan_color}- DNI:      {yellow_color}{found_client['dni']}")
+            found_client['nombre'] = validar.solo_letras(f"{cyan_color}- Nombre:   {yellow_color}",f"{red_color}- ¿Su nombre lleva números? ¡Intentelo de nuevo! 😡",62,8)
+            found_client['apellido'] = validar.solo_letras(f"{cyan_color}- Apellido: {yellow_color}",f"{red_color}- ¿Su apellido lleva números? ¡Intentelo de nuevo! 😡",62,9)
+            new_valor = validar.solo_decimales(f"{cyan_color}- Valor:    {yellow_color}",'¡El valor debe ser un flotante! ​😹​🖐️      ',62,10)
+            found_client['valor'] = new_valor 
+            found_client['tipo'] = 'VIP' if new_valor > 5000 else 'Regular'
+            gotoxy(4,12);confirm=input(f"{stick}Ingrese '1' para guardar cambios {stick}Ingrese 2 para cancelar y salir {stick} ") 
+            gotoxy(4,12);print(' '*100)   
+            if confirm == "1":
+              json_file.save(clients_data)
+              gotoxy(10,12);input(yellow_color + '​✅​ Datos actualizados correctamente. Presione ENTER para regresar. 🙂   ​')
+              break
+            else:
+              gotoxy(10,12);print('Salir sin guardar datos... 🤧​');time.sleep(2)
+            break
         else:
-          gotoxy(10, 12);print(red_color + "Regresando al menu principal... 😟​ ​");time.sleep(2)
-          borrarPantalla()
+          gotoxy(10,12);print(red_color + "Regresando al menu principal... 😟​ ​");time.sleep(2)
         break
       else:
-        gotoxy(10, 7);print(red_color + "🥶 Sin resultados de busqueda. Inténtelo nuevamente. 🥶 ");time.sleep(2)
+        gotoxy(10,5);print(red_color + "Sin resultados de busqueda. Inténtelo nuevamente. 🥶 ");time.sleep(2)
         borrarPantalla()
       break
   borrarPantalla()
@@ -137,14 +142,13 @@ class CrudClients(ICrud):
       break
   borrarPantalla()
 
-  def update(self):
+  def consult(self):
     stick = f'{red_color}| - {reset_color}'
     while True:
       print('\033c', end='')
-      gotoxy(2,1);print(purple_color + "︵ ‿ ︵ ‿ ︵＼ʕ •ᴥ•ʔ／︵ ‿ ︵ ‿ ︵"*3)
-      gotoxy(25,3);print(red_color + '🔴 ACTUALIZAR INFO. DE CLIENTE 🔴')
-      gotoxy(10,5);dni = input(f"{cyan_color}- Ingrese DNI del cliente:{yellow_color} ")
-      gotoxy(10,5);print(' '*120)
+      gotoxy(2,1);print(purple_color + "●～●～●～●～●～●～●～●～"*4)
+      gotoxy(25,3);print(red_color + '🔴​​​ CONSULTAR INFO. DE CLIENTES 🔴​​​')
+      gotoxy(10,5);dni = input(f"{cyan_color}- Ingrese DNI del cliente: {yellow_color}")
       json_file = JsonFile(path+'/archivos/clients.json')
       clients_data = json_file.read()
       found_client = None
@@ -153,47 +157,22 @@ class CrudClients(ICrud):
           found_client = client
           break
       if found_client:
-        gotoxy(10,5);print(f"{purple_color}- INFORMACIÓN ACTUAL:")
-        gotoxy(10,7);print(f"{cyan_color}- DNI:      {yellow_color}{found_client['dni']}")
-        gotoxy(10,8);print(f"{cyan_color}- Nombre:   {yellow_color}{found_client['nombre']}")
-        gotoxy(10,9);print(f"{cyan_color}- Apellido: {yellow_color}{found_client['apellido']}")
-        gotoxy(10,10);print(f"{cyan_color}- Valor:    {yellow_color}{found_client['valor']}")
-        gotoxy(4,12);option=input(f"{stick}Ingrese '1' para actualizar datos {stick}Ingrese '2' para salir {stick} ")    
-        gotoxy(4,12);print(' '*200)
+        gotoxy(10,7);print(f"{cyan_color}- Nombre:   {yellow_color}{found_client['nombre']}")
+        gotoxy(10,8);print(f"{cyan_color}- Apellido: {yellow_color}{found_client['apellido']}")
+        gotoxy(10,9);print(f"{cyan_color}- Valor:    {yellow_color}{found_client['valor']}")
+        gotoxy(10,10);print(f"{cyan_color}- Tipo:    {yellow_color}{found_client['tipo']}")
+        gotoxy(4,12);option=input(f"{stick}Ingrese '1' para volver a consultar {stick}Presione ENTER para salir {stick} ")
+        gotoxy(4,12);print(' '*300)
         if option == "1":
-          while True:
-            gotoxy(62,5);print(f"{purple_color}- ACTUALIZAR INFORMACIÓN:")
-            new_dni = validar.cedula(f"{cyan_color}- DNI:      {yellow_color}", 62,7)
-            found_client['dni'] = new_dni
-
-            gotoxy(62,8);new_name=input(f"{cyan_color}- Nombre:   {yellow_color}")
-            found_client['nombre'] = new_name
-
-            gotoxy(62,9);new_apellido=input(f"{cyan_color}- Apellido: {yellow_color}")
-            found_client['apellido'] = new_apellido
-
-            new_valor = validar.solo_decimales(f"{cyan_color}- Valor:    {yellow_color}",'¡El valor debe ser un flotante! ​😹​🖐️      ',62,10)
-            found_client['valor'] = new_valor 
-
-            if new_valor > 5000:
-              found_client['tipo'] = 'VIP'
-            else:
-              found_client['tipo'] = 'Regular'
-
-            gotoxy(4,12);confirm=input(f"{stick}Ingrese '1' para guardar cambios {stick}Ingrese 2 para cancelar y salir {stick} ") 
-            gotoxy(4,12);print(' '*100)   
-            if confirm == "1":
-              json_file.save(clients_data)
-              gotoxy(10,12);input(yellow_color + '​✅​ Datos actualizados correctamente. Presione ENTER para regresar. 🙂   ​')
-              break
-            else:
-              gotoxy(10,12);print('Salir sin guardar datos... 🤧​');time.sleep(2)
-            break
+          gotoxy(10, 12);print(red_color + "Volver a buscar cliente... ​😜​");time.sleep(2)
+          borrarPantalla()
+          continue
         else:
-          gotoxy(10,12);print(red_color + "Regresando al menu principal... 😟​ ​");time.sleep(2)
+          gotoxy(10, 12);print(red_color + "Regresando al menu principal... 😟​ ​");time.sleep(2)
+          borrarPantalla()
         break
       else:
-        gotoxy(10,5);print(red_color + "Sin resultados de busqueda. Inténtelo nuevamente. 🥶 ");time.sleep(2)
+        gotoxy(10, 7);print(red_color + "🥶 Sin resultados de busqueda. Inténtelo nuevamente. 🥶 ");time.sleep(2)
         borrarPantalla()
       break
   borrarPantalla()

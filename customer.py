@@ -23,6 +23,9 @@ class Client:
   def fullName(self):
     return self.first_name + ' ' + self.last_name
   
+  def return_dni(self):
+    return self.__dni
+  
 class RegularClient(Client):
   def __init__(self, first_name="Cliente", last_name="Final", dni="9999999999", card=False):
     super().__init__(first_name, last_name, dni) 
