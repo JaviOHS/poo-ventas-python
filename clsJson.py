@@ -109,29 +109,68 @@ class JsonFile:
 
 
   def print_all_invoices(self, invoices):
-    gotoxy(6, 5);print(f"{yellow_color}- Facturas cargadas con éxito: {len(invoices):<20} ✅ Presione ENTER para salir. ​🗿 ​")
-    current_line = 7  # Inicializa la línea actual en 5
+    gotoxy(6,5);print(f"{yellow_color}- Facturas cargados con éxito: {len(invoices):<10} ✅ Presione ENTER para continuar. ​🗿 ​")
+    gotoxy(5,7);print(red_color + "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" * 4 + reset_color)
+    gotoxy(10,9);print(Company.get_business_name())
+    gotoxy(5,11);print(red_color + "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" * 4 + reset_color)
+    current_line = 12  
     for invoice_data in invoices:
-      gotoxy(5, current_line);print(red_color + "✂ ————– ✂ ————– " *6  + '✂' + reset_color)
       current_line += 1 
-      line_div_2 = green_color + "-" * 70 + reset_color
-      gotoxy(15, current_line + 1);print(Company.get_business_name())
-      current_line += 2
-      gotoxy(5, current_line);print(f"{purple_color}Número de Factura: {blue_color}{invoice_data['factura']:<15}{purple_color}Fecha: {blue_color}{invoice_data['Fecha']:<20}{purple_color}Cliente: {blue_color}{invoice_data['cliente']}")
+      line_div_2 = green_color + "--------------------" * 4 + reset_color
+      gotoxy(5, current_line);print(f"{purple_color}Número de Factura: {blue_color}{invoice_data['factura']:<10}{purple_color}Fecha: {blue_color}{invoice_data['Fecha']:<20}{purple_color}Cliente: {blue_color}{invoice_data['cliente']}")
       current_line += 1
-      gotoxy(6, current_line);print(f"{purple_color}Subtotal: {yellow_color}{invoice_data['subtotal']:<10}{purple_color}Descuento: {yellow_color}{invoice_data['descuento']:<10}{purple_color}IVA: {yellow_color}{invoice_data['iva']:<10}{purple_color}Total: {red_color}{invoice_data['total']:<10}")
+      gotoxy(5, current_line);print(f"{purple_color}Subtotal: {yellow_color}{invoice_data['subtotal']:<19}{purple_color}Descuento: {yellow_color}{invoice_data['descuento']:<16}{purple_color}IVA: {yellow_color}{invoice_data['iva']:<10}{purple_color}")
       current_line += 1
-      gotoxy(10, current_line);print(line_div_2)
+      gotoxy(5, current_line);print(line_div_2)
       current_line += 1
-      gotoxy(15, current_line);print(f"{purple_color}{'Productos':<15} {'Precio':<10} {'Cantidad':<10} {'Subtotal':<10}")
+      gotoxy(15, current_line);print(f"{purple_color}{'Productos':<15} {'Precio':<10} {'Cantidad':<10}")
       current_line += 1
       for detail in invoice_data['detalle']:
-          gotoxy(15, current_line);print(blue_color + f"{detail['producto']:<15} {detail['precio']:<10} {detail['cantidad']:<10} {invoice_data['subtotal']:<10}")
+          gotoxy(15, current_line);print(blue_color + f"{detail['producto']:<15} {detail['precio']:<10} {detail['cantidad']:<10}")
           current_line += 1
-      gotoxy(10,current_line);print(line_div_2)
+      gotoxy(5,current_line);print(line_div_2)
       current_line += 1
-      gotoxy(15, current_line);print(f"{'Total: ':<38}{red_color}{invoice_data['total']}")
-      current_line += 3
+      gotoxy(15, current_line);print(f"{purple_color}{'Total: ':<38}{red_color}{invoice_data['total']}")
+      current_line += 2
+      gotoxy(5,current_line);print(green_color + "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" * 4 + reset_color)
+      current_line += 2
+    gotoxy(90,5);input()
+  borrarPantalla()
+
+
+  def print_all_products(self, *args, **kwargs):
+    products_data = args[0] 
+    gotoxy(6,5);print(f"{yellow_color}- Productos cargados con éxito: {len(products_data):<10} ✅ Presione ENTER para continuar. ​🗿 ​")
+    gotoxy(15,7);print(red_color + "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" * 4 + reset_color)
+    gotoxy(20,9);print(Company.get_business_name())
+    gotoxy(15,11);print(red_color + "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" * 4 + reset_color)
+    current_line = 12 
+    for product in products_data:
+        current_line += 1
+        gotoxy(25, current_line);print(f"{purple_color}ID: {blue_color}{product['id']:<15}{purple_color}Producto: {blue_color}{product['descripcion']:<20}")
+        current_line += 1
+        gotoxy(25, current_line);print(f"{purple_color}Precio: {yellow_color}{product['precio']:<11}{purple_color}Stock: {yellow_color}{product['stock']:<20}")
+        current_line += 1
+        gotoxy(15, current_line);print(cyan_color + "--------------------" * 4 + reset_color)
+        current_line += 1
+    gotoxy(90,5)
+    input()
+  borrarPantalla()
+
+  def print_all_clients(self, clients):
+    gotoxy(6,5);print(f"{yellow_color}- Clientes cargados con éxito: {len(clients):<10} ✅ Presione ENTER para continuar. ​🗿 ​")
+    gotoxy(8,7);print(red_color + "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" * 4 + reset_color)
+    gotoxy(16,9);print(Company.get_business_name())
+    gotoxy(8,11);print(red_color + "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄" * 4 + reset_color)
+    current_line = 12 
+    for client in clients:
+      current_line += 1 
+      gotoxy(10, current_line);print(f"{purple_color}DNI: {blue_color}{client['dni']:<25}{purple_color}Nombres: {blue_color}{client['nombre']} {client['apellido']:<20}")
+      current_line += 1
+      gotoxy(10, current_line);print(f"{purple_color}Valor: {yellow_color}{client['valor']:<23}{purple_color}Tipo: {yellow_color}{client['tipo']:<20}")
+      current_line += 1
+      gotoxy(8, current_line);print(yellow_color + "--------------------" * 4 + reset_color)
+      current_line += 1
     gotoxy(90,5);input()
   borrarPantalla()
     
